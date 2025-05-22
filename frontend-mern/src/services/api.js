@@ -12,6 +12,12 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  
+  // Si c'est un FormData, laisser axios gérer le Content-Type automatiquement
+  if (config.data instanceof FormData) {
+    delete config.headers['Content-Type'];
+  }
+  
   return config;
 });
 
@@ -38,9 +44,34 @@ export const productService = {
   getAllProducts: () => api.get('/products'),
   getUserProducts: () => api.get('/products/my-products'),
   getProductById: (id) => api.get(`/products/${id}`),
-  createProduct: (productData) => api.post('/products', productData),
-  updateProduct: (id, productData) => api.put(`/products/${id}`, productData),
+  
+  // Méthodes qui supportent FormData et JSON
+  createProduct: (productData) => {
+    const config = {};
+    if (productData instanceof FormData) {
+      config.headers = { 'Content-Type': 'multipart/form-data' };
+    }
+    return api.post('/products', productData, config);
+  },
+  
+  updateProduct: (id, productData) => {
+    const config = {};
+    if (productData instanceof FormData) {
+      config.headers = { 'Content-Type': 'multipart/form-data' };
+    }
+    return api.put(`/products/${id}`, productData, config);
+  },
+  
   deleteProduct: (id) => api.delete(`/products/${id}`),
+  
+  // Service pour tester l'upload
+  testUpload: (file) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    return api.post('/products/upload-test', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+  }
 };
 
 export default api;

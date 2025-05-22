@@ -1,13 +1,28 @@
 const Product = require('../models/Product');
+const path = require('path');
+const fs = require('fs');
 
-// 🔸 Create
+// 🔸 Create avec upload d'image
 exports.createProduct = async (req, res) => {
   try {
-    const product = new Product({ ...req.body, owner: req.user.userId });
+    const productData = { ...req.body, owner: req.user.userId };
+    
+    // Si une image a été uploadée
+    if (req.file) {
+      productData.imageUrl = `/uploads/products/${req.file.filename}`;
+    }
+
+    const product = new Product(productData);
     await product.save();
     await product.populate('owner', 'username email');
     res.status(201).json(product);
   } catch (err) {
+    // Supprimer l'image si erreur de création
+    if (req.file) {
+      fs.unlink(req.file.path, (unlinkErr) => {
+        if (unlinkErr) console.error('Erreur suppression fichier:', unlinkErr);
+      });
+    }
     res.status(400).json({ message: err.message });
   }
 };
@@ -54,21 +69,82 @@ exports.getProductById = async (req, res) => {
   }
 };
 
-// 🔸 Update
+// 🔸 Update avec gestion d'image
 exports.updateProduct = async (req, res) => {
   try {
-    const updated = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true }).populate('owner', 'username email');
+    const productId = req.params.id;
+    const updateData = { ...req.body };
+    
+    // Récupérer le produit existant pour supprimer l'ancienne image si nécessaire
+    const existingProduct = await Product.findById(productId);
+    if (!existingProduct) {
+      return res.status(404).json({ message: 'Produit introuvable' });
+    }
+
+    // Si une nouvelle image a été uploadée
+    if (req.file) {
+      updateData.imageUrl = `/uploads/products/${req.file.filename}`;
+      
+      // Supprimer l'ancienne image si elle existe
+      if (existingProduct.imageUrl && existingProduct.imageUrl.startsWith('/uploads/')) {
+        const oldImagePath = path.join(__dirname, '..', existingProduct.imageUrl);
+        fs.unlink(oldImagePath, (err) => {
+          if (err) console.error('Erreur suppression ancienne image:', err);
+        });
+      }
+    }
+
+    const updated = await Product.findByIdAndUpdate(productId, updateData, { new: true })
+      .populate('owner', 'username email');
+    
     res.json(updated);
+  } catch (err) {
+    // Supprimer la nouvelle image si erreur de mise à jour
+    if (req.file) {
+      fs.unlink(req.file.path, (unlinkErr) => {
+        if (unlinkErr) console.error('Erreur suppression fichier:', unlinkErr);
+      });
+    }
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// 🔸 Delete avec suppression d'image
+exports.deleteProduct = async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ message: 'Produit introuvable' });
+    }
+
+    // Supprimer l'image associée si elle existe
+    if (product.imageUrl && product.imageUrl.startsWith('/uploads/')) {
+      const imagePath = path.join(__dirname, '..', product.imageUrl);
+      fs.unlink(imagePath, (err) => {
+        if (err) console.error('Erreur suppression image:', err);
+      });
+    }
+
+    await Product.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Produit supprimé avec succès' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
-// 🔸 Delete
-exports.deleteProduct = async (req, res) => {
+// 🔸 Route de test pour l'upload
+exports.uploadTest = async (req, res) => {
   try {
-    await Product.findByIdAndDelete(req.params.id);
-    res.json({ message: 'Produit supprimé avec succès' });
+    if (!req.file) {
+      return res.status(400).json({ message: 'Aucun fichier uploadé' });
+    }
+    
+    res.json({
+      message: 'Image uploadée avec succès',
+      filename: req.file.filename,
+      url: `/uploads/products/${req.file.filename}`,
+      fullUrl: `${req.protocol}://${req.get('host')}/uploads/products/${req.file.filename}`
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

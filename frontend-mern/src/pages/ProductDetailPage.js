@@ -48,6 +48,18 @@ const ProductDetailPage = () => {
     }
   };
 
+  // Déterminer l'URL de l'image
+  const getImageUrl = () => {
+    if (product?.imageUrl) {
+      // Image uploadée sur le serveur
+      return `http://localhost:5000${product.imageUrl}`;
+    } else if (product?.image) {
+      // URL externe (pour la compatibilité)
+      return product.image;
+    }
+    return null;
+  };
+
   const isOwner = isAuthenticated && user && product && 
     (user.id === product.owner._id || user.id === product.owner);
 
@@ -81,6 +93,8 @@ const ProductDetailPage = () => {
     );
   }
 
+  const imageUrl = getImageUrl();
+
   return (
     <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
       {/* Breadcrumb */}
@@ -104,9 +118,9 @@ const ProductDetailPage = () => {
       }}>
         {/* Image du produit */}
         <div>
-          {product.image ? (
+          {imageUrl ? (
             <img 
-              src={product.image} 
+              src={imageUrl} 
               alt={product.name}
               style={{ 
                 width: '100%', 
@@ -122,7 +136,7 @@ const ProductDetailPage = () => {
           ) : null}
           <div 
             style={{ 
-              display: product.image ? 'none' : 'flex',
+              display: imageUrl ? 'none' : 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               height: '400px',

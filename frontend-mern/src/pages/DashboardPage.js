@@ -4,6 +4,7 @@ import { productService } from '../services/api';
 import { handleApiError } from '../utils/helpers';
 import ProductForm from '../components/Products/ProductForm';
 import UserProductList from '../components/Products/UserProductList';
+import UploadTest from '../components/Products/UploadTest';
 
 const DashboardPage = () => {
   const [products, setProducts] = useState([]);
@@ -12,6 +13,7 @@ const DashboardPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [message, setMessage] = useState('');
+  const [showUploadTest, setShowUploadTest] = useState(false);
 
   const { user } = useAuth();
 
@@ -108,7 +110,7 @@ const DashboardPage = () => {
         </div>
       )}
 
-      <div style={{ marginBottom: '30px' }}>
+      <div style={{ marginBottom: '30px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
         <button 
           onClick={() => setShowForm(true)}
           style={{ 
@@ -125,7 +127,27 @@ const DashboardPage = () => {
         >
           {showForm ? 'Formulaire ouvert' : 'Ajouter un produit'}
         </button>
+
+        {/* <button 
+          onClick={() => setShowUploadTest(!showUploadTest)}
+          style={{ 
+            padding: '12px 24px',
+            backgroundColor: showUploadTest ? '#dc3545' : '#28a745',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '16px',
+            fontWeight: 'bold'
+          }}
+        >
+          {showUploadTest ? 'Masquer le test' : 'Tester l\'upload'}
+        </button> */}
       </div>
+
+      {showUploadTest && (
+        <UploadTest />
+      )}
 
       {showForm && (
         <div style={{ marginBottom: '40px' }}>

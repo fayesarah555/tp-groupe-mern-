@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { formatPrice, truncateText } from '../../utils/helpers';
 
 const ProductCard = ({ product, showActions = false, onEdit, onDelete }) => {
@@ -20,6 +20,20 @@ const ProductCard = ({ product, showActions = false, onEdit, onDelete }) => {
   const handleCardClick = () => {
     navigate(`/products/${product._id}`);
   };
+
+  // Déterminer l'URL de l'image
+  const getImageUrl = () => {
+    if (product.imageUrl) {
+      // Image uploadée sur le serveur
+      return `http://localhost:5000${product.imageUrl}`;
+    } else if (product.image) {
+      // URL externe (pour la compatibilité)
+      return product.image;
+    }
+    return null;
+  };
+
+  const imageUrl = getImageUrl();
 
   return (
     <div 
@@ -44,9 +58,9 @@ const ProductCard = ({ product, showActions = false, onEdit, onDelete }) => {
     >
       
       <div style={{ position: 'relative', height: '200px', overflow: 'hidden' }}>
-        {product.image ? (
+        {imageUrl ? (
           <img 
-            src={product.image} 
+            src={imageUrl} 
             alt={product.name}
             style={{ 
               width: '100%', 
@@ -61,7 +75,7 @@ const ProductCard = ({ product, showActions = false, onEdit, onDelete }) => {
         ) : null}
         <div 
           style={{ 
-            display: product.image ? 'none' : 'flex',
+            display: imageUrl ? 'none' : 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             height: '100%',

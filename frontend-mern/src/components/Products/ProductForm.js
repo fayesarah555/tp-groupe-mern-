@@ -8,8 +8,9 @@ const ProductForm = ({ product, onProductCreated, onProductUpdated, onCancel }) 
     description: '',
     price: '',
     category: '',
-    image: ''
   });
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState('');
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
@@ -22,8 +23,12 @@ const ProductForm = ({ product, onProductCreated, onProductUpdated, onCancel }) 
         description: product.description || '',
         price: product.price?.toString() || '',
         category: product.category || '',
-        image: product.image || ''
       });
+      
+      // Afficher l'image existante
+      if (product.imageUrl) {
+        setImagePreview(`http://localhost:5000${product.imageUrl}`);
+      }
     }
   }, [product, isEditing]);
 
@@ -39,6 +44,48 @@ const ProductForm = ({ product, onProductCreated, onProductUpdated, onCancel }) 
         ...prev,
         [name]: ''
       }));
+    }
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validation du fichier
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      const maxSize = 5 * 1024 * 1024; // 5MB
+
+      if (!allowedTypes.includes(file.type)) {
+        setErrors(prev => ({
+          ...prev,
+          image: 'Type de fichier non autorisé. Utilisez JPG, PNG, GIF ou WebP.'
+        }));
+        return;
+      }
+
+      if (file.size > maxSize) {
+        setErrors(prev => ({
+          ...prev,
+          image: 'La taille du fichier ne doit pas dépasser 5MB.'
+        }));
+        return;
+      }
+
+      setSelectedImage(file);
+      
+      // Créer une prévisualisation
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target.result);
+      };
+      reader.readAsDataURL(file);
+
+      // Effacer l'erreur image
+      if (errors.image) {
+        setErrors(prev => ({
+          ...prev,
+          image: ''
+        }));
+      }
     }
   };
 
@@ -61,21 +108,8 @@ const ProductForm = ({ product, onProductCreated, onProductUpdated, onCancel }) 
       newErrors.category = 'La catégorie est requise';
     }
 
-    if (formData.image && !isValidUrl(formData.image)) {
-      newErrors.image = 'L\'URL de l\'image n\'est pas valide';
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
-
-  const isValidUrl = (string) => {
-    try {
-      new URL(string);
-      return true;
-    } catch (_) {
-      return false;
-    }
   };
 
   const handleSubmit = async (e) => {
@@ -86,19 +120,23 @@ const ProductForm = ({ product, onProductCreated, onProductUpdated, onCancel }) 
     setLoading(true);
 
     try {
-      const productData = {
-        name: formData.name.trim(),
-        description: formData.description.trim(),
-        price: parseFloat(formData.price),
-        category: formData.category,
-        image: formData.image.trim() || undefined
-      };
+      // Créer un FormData pour gérer le fichier
+      const formDataToSend = new FormData();
+      formDataToSend.append('name', formData.name.trim());
+      formDataToSend.append('description', formData.description.trim());
+      formDataToSend.append('price', parseFloat(formData.price));
+      formDataToSend.append('category', formData.category);
+      
+      // Ajouter l'image si une nouvelle a été sélectionnée
+      if (selectedImage) {
+        formDataToSend.append('image', selectedImage);
+      }
 
       if (isEditing) {
-        const response = await productService.updateProduct(product._id, productData);
+        const response = await productService.updateProduct(product._id, formDataToSend);
         onProductUpdated(response.data);
       } else {
-        const response = await productService.createProduct(productData);
+        const response = await productService.createProduct(formDataToSend);
         onProductCreated(response.data);
       }
 
@@ -109,8 +147,9 @@ const ProductForm = ({ product, onProductCreated, onProductUpdated, onCancel }) 
           description: '',
           price: '',
           category: '',
-          image: ''
         });
+        setSelectedImage(null);
+        setImagePreview('');
       }
       
     } catch (error) {
@@ -241,34 +280,36 @@ const ProductForm = ({ product, onProductCreated, onProductUpdated, onCancel }) 
 
         <div style={{ marginBottom: '15px' }}>
           <label htmlFor="image" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-            URL de l'image (optionnel)
+            Image du produit (optionnel)
           </label>
           <input
-            type="url"
+            type="file"
             id="image"
             name="image"
-            value={formData.image}
-            onChange={handleChange}
+            accept="image/*"
+            onChange={handleImageChange}
             style={{ 
               width: '100%', 
               padding: '8px', 
               border: errors.image ? '2px solid red' : '1px solid #ccc',
               borderRadius: '4px'
             }}
-            placeholder="https://exemple.com/image.jpg"
             disabled={loading}
           />
           {errors.image && <span style={{ color: 'red', fontSize: '14px' }}>{errors.image}</span>}
-          {formData.image && !errors.image && (
+          
+          {imagePreview && (
             <div style={{ marginTop: '10px' }}>
+              <p style={{ fontSize: '14px', color: '#666', marginBottom: '5px' }}>Aperçu :</p>
               <img 
-                src={formData.image} 
+                src={imagePreview} 
                 alt="Aperçu" 
-                style={{ maxWidth: '200px', maxHeight: '150px', borderRadius: '4px' }}
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  setErrors(prev => ({ ...prev, image: 'Image non accessible' }));
-                }} 
+                style={{ 
+                  maxWidth: '200px', 
+                  maxHeight: '150px', 
+                  borderRadius: '4px',
+                  border: '1px solid #ddd'
+                }}
               />
             </div>
           )}
