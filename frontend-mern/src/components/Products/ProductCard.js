@@ -1,32 +1,47 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { formatPrice, truncateText } from '../../utils/helpers';
 
 const ProductCard = ({ product, showActions = false, onEdit, onDelete }) => {
-  const handleDelete = () => {
+  const navigate = useNavigate();
+
+  const handleDelete = (e) => {
+    e.stopPropagation(); // Empêcher la navigation lors du clic sur supprimer
     if (window.confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
       onDelete(product._id);
     }
   };
 
+  const handleEdit = (e) => {
+    e.stopPropagation(); // Empêcher la navigation lors du clic sur modifier
+    onEdit(product);
+  };
+
+  const handleCardClick = () => {
+    navigate(`/products/${product._id}`);
+  };
+
   return (
-    <div style={{ 
-      border: '1px solid #ddd', 
-      borderRadius: '8px',
-      overflow: 'hidden',
-      backgroundColor: 'white',
-      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-      transition: 'transform 0.2s, box-shadow 0.2s',
-      cursor: 'pointer'
-    }}
-    onMouseEnter={(e) => {
-      e.currentTarget.style.transform = 'translateY(-2px)';
-      e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
-    }}
-    onMouseLeave={(e) => {
-      e.currentTarget.style.transform = 'translateY(0)';
-      e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
-    }}>
+    <div 
+      onClick={handleCardClick}
+      style={{ 
+        border: '1px solid #ddd', 
+        borderRadius: '8px',
+        overflow: 'hidden',
+        backgroundColor: 'white',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        transition: 'transform 0.2s, box-shadow 0.2s',
+        cursor: 'pointer'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'translateY(-2px)';
+        e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'translateY(0)';
+        e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+      }}
+    >
       
       <div style={{ position: 'relative', height: '200px', overflow: 'hidden' }}>
         {product.image ? (
@@ -77,18 +92,7 @@ const ProductCard = ({ product, showActions = false, onEdit, onDelete }) => {
           fontSize: '1.2rem',
           color: '#333'
         }}>
-          <Link 
-            to={`/products/${product._id}`}
-            style={{ 
-              textDecoration: 'none', 
-              color: 'inherit',
-              transition: 'color 0.2s'
-            }}
-            onMouseEnter={(e) => e.target.style.color = '#007bff'}
-            onMouseLeave={(e) => e.target.style.color = '#333'}
-          >
-            {product.name}
-          </Link>
+          {product.name}
         </h3>
         
         {product.description && (
@@ -126,7 +130,7 @@ const ProductCard = ({ product, showActions = false, onEdit, onDelete }) => {
             marginTop: '15px'
           }}>
             <button
-              onClick={() => onEdit(product)}
+              onClick={handleEdit}
               style={{ 
                 flex: 1,
                 padding: '8px 12px',

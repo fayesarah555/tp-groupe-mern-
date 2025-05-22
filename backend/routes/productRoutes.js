@@ -1,18 +1,25 @@
-// productRoutes.js
 const express = require('express');
 const router = express.Router();
-const auth = require('../middlewares/authMiddleware');
-const owner = require('../middlewares/ownerMiddleware');
-const {
-  createProduct, getAllProducts, getUserProducts,
-  getProductById, updateProduct, deleteProduct
-} = require('../controllers/productController');
+const productController = require('../controllers/productController');
+const authMiddleware = require('../middlewares/authMiddleware');
+const ownerMiddleware = require('../middlewares/ownerMiddleware');
 
-router.post('/', auth, createProduct);
-router.get('/', getAllProducts);
-router.get('/my', auth, getUserProducts);
-router.get('/:id', getProductById);
-router.put('/:id', auth, owner, updateProduct);
-router.delete('/:id', auth, owner, deleteProduct);
+// ✅ ROUTES SPÉCIFIQUES EN PREMIER
+// Route pour récupérer les produits de l'utilisateur connecté
+router.get('/my-products', authMiddleware, productController.getUserProducts);
+
+// ✅ ENSUITE LES ROUTES AVEC PARAMÈTRES DYNAMIQUES
+// Route publique pour récupérer tous les produits
+router.get('/', productController.getAllProducts);
+
+// Route publique pour récupérer un produit par ID
+router.get('/:id', productController.getProductById);
+
+// Routes protégées pour créer un produit
+router.post('/', authMiddleware, productController.createProduct);
+
+// Routes protégées pour modifier/supprimer (avec vérification propriétaire)
+router.put('/:id', authMiddleware, ownerMiddleware, productController.updateProduct);
+router.delete('/:id', authMiddleware, ownerMiddleware, productController.deleteProduct);
 
 module.exports = router;
