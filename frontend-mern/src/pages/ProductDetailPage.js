@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { productService } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import { handleApiError, formatPrice, formatDate } from '../utils/helpers';
-import '../styles/ProductDetail.css';
+// import '../styles/ProductDetail.css';
 
 const ProductDetailPage = () => {
   const [product, setProduct] = useState(null);

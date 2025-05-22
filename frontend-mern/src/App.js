@@ -1,15 +1,14 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
-import Navbar from './components/Layout/Navbar';
+import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import ProductsPage from './pages/ProductsPage';
 import ProductDetailPage from './pages/ProductDetailPage';
-import PrivateRoute from './components/Auth/PrivateRoute';
-import './App.css';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   return (
@@ -17,7 +16,7 @@ function App() {
       <Router>
         <div className="App">
           <Navbar />
-          <main className="main-content">
+          <main style={{ padding: '20px' }}>
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<LoginPage />} />

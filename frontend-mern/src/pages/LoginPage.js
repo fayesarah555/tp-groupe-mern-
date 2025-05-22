@@ -1,143 +1,98 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { authService } from '../services/api';
-import { handleApiError, isValidEmail } from '../utils/helpers';
-import '../styles/Auth.css';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   });
-  const [errors, setErrors] = useState({});
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
 
-  const { login, isAuthenticated } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/dashboard');
-    }
-  }, [isAuthenticated, navigate]);
-
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    // Effacer l'erreur pour ce champ
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
-    }
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.email.trim()) {
-      newErrors.email = 'L\'email est requis';
-    } else if (!isValidEmail(formData.email)) {
-      newErrors.email = 'Format d\'email invalide';
-    }
-
-    if (!formData.password.trim()) {
-      newErrors.password = 'Le mot de passe est requis';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!validateForm()) return;
-
     setLoading(true);
-    setMessage('');
+    setError('');
 
     try {
       const response = await authService.login(formData);
       const { token, user } = response.data;
       
       login(token, user);
-      setMessage('Connexion réussie ! Redirection...');
-      
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 1000);
-      
+      navigate('/dashboard');
     } catch (error) {
-      const errorMessage = handleApiError(error);
-      setMessage(errorMessage);
+      setError(error.response?.data?.message || 'Erreur lors de la connexion');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h2 className="auth-title">Connexion</h2>
-        
-        {message && (
-          <div className={`message ${message.includes('réussie') ? 'success' : 'error'}`}>
-            {message}
-          </div>
-        )}
+    <div style={{ maxWidth: '400px', margin: '0 auto' }}>
+      <h2>Connexion</h2>
+      
+      {error && (
+        <div style={{ color: 'red', marginBottom: '1rem' }}>
+          {error}
+        </div>
+      )}
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className={errors.email ? 'error' : ''}
-              placeholder="Votre email"
-              disabled={loading}
-            />
-            {errors.email && <span className="error-text">{errors.email}</span>}
-          </div>
+      <form onSubmit={handleSubmit}>
+        <div style={{ marginBottom: '1rem' }}>
+          <label>Email:</label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            style={{ width: '100%', padding: '0.5rem', marginTop: '0.25rem' }}
+          />
+        </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Mot de passe</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className={errors.password ? 'error' : ''}
-              placeholder="Votre mot de passe"
-              disabled={loading}
-            />
-            {errors.password && <span className="error-text">{errors.password}</span>}
-          </div>
+        <div style={{ marginBottom: '1rem' }}>
+          <label>Mot de passe:</label>
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+            style={{ width: '100%', padding: '0.5rem', marginTop: '0.25rem' }}
+          />
+        </div>
 
-          <button 
-            type="submit" 
-            className="btn btn-primary btn-full"
-            disabled={loading}
-          >
-            {loading ? 'Connexion...' : 'Se connecter'}
-          </button>
-        </form>
+        <button 
+          type="submit" 
+          disabled={loading}
+          style={{ 
+            width: '100%', 
+            padding: '0.75rem', 
+            backgroundColor: '#3498db', 
+            color: 'white', 
+            border: 'none',
+            cursor: 'pointer'
+          }}
+        >
+          {loading ? 'Connexion...' : 'Se connecter'}
+        </button>
+      </form>
 
-        <p className="auth-switch">
-          Pas encore de compte ? 
-          <Link to="/register"> Créer un compte</Link>
-        </p>
-      </div>
+      <p style={{ textAlign: 'center', marginTop: '1rem' }}>
+        Pas de compte ? <Link to="/register">Créer un compte</Link>
+      </p>
     </div>
   );
 };

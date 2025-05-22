@@ -3,7 +3,7 @@ import { productService } from '../services/api';
 import { handleApiError, debounce } from '../utils/helpers';
 import SearchFilter from '../components/Products/SearchFilter';
 import ProductGrid from '../components/Products/ProductGrid';
-import '../styles/ProductsPage.css';
+// import '../styles/ProductsPage.css';
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);

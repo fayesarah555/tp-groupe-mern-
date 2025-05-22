@@ -1,9 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
 import { authService } from '../services/api';
-import { handleApiError, isValidEmail, isValidPassword } from '../utils/helpers';
-import '../styles/Auth.css';
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -12,182 +9,131 @@ const RegisterPage = () => {
     password: '',
     confirmPassword: ''
   });
-  const [errors, setErrors] = useState({});
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
+  const [success, setSuccess] = useState('');
 
-  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/dashboard');
-    }
-  }, [isAuthenticated, navigate]);
-
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-    // Effacer l'erreur pour ce champ
-    if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
-    }
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.username.trim()) {
-      newErrors.username = 'Le nom d\'utilisateur est requis';
-    } else if (formData.username.trim().length < 3) {
-      newErrors.username = 'Le nom d\'utilisateur doit contenir au moins 3 caractères';
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = 'L\'email est requis';
-    } else if (!isValidEmail(formData.email)) {
-      newErrors.email = 'Format d\'email invalide';
-    }
-
-    if (!formData.password) {
-      newErrors.password = 'Le mot de passe est requis';
-    } else if (!isValidPassword(formData.password)) {
-      newErrors.password = 'Le mot de passe doit contenir au moins 6 caractères';
-    }
-
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'La confirmation du mot de passe est requise';
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Les mots de passe ne correspondent pas';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!validateForm()) return;
-
     setLoading(true);
-    setMessage('');
+    setError('');
+
+    // Vérification des mots de passe
+    if (formData.password !== formData.confirmPassword) {
+      setError('Les mots de passe ne correspondent pas');
+      setLoading(false);
+      return;
+    }
 
     try {
-      const userData = {
-        username: formData.username.trim(),
-        email: formData.email.trim(),
+      await authService.register({
+        username: formData.username,
+        email: formData.email,
         password: formData.password
-      };
-
-      await authService.register(userData);
+      });
       
-      setMessage('Inscription réussie ! Vous pouvez maintenant vous connecter.');
-      
-      setTimeout(() => {
-        navigate('/login');
-      }, 2000);
-      
+      setSuccess('Inscription réussie ! Vous pouvez maintenant vous connecter.');
+      setTimeout(() => navigate('/login'), 2000);
     } catch (error) {
-      const errorMessage = handleApiError(error);
-      setMessage(errorMessage);
+      setError(error.response?.data?.message || 'Erreur lors de l\'inscription');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h2 className="auth-title">Inscription</h2>
-        
-        {message && (
-          <div className={`message ${message.includes('réussie') ? 'success' : 'error'}`}>
-            {message}
-          </div>
-        )}
+    <div style={{ maxWidth: '400px', margin: '0 auto' }}>
+      <h2>Inscription</h2>
+      
+      {error && (
+        <div style={{ color: 'red', marginBottom: '1rem' }}>
+          {error}
+        </div>
+      )}
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label htmlFor="username">Nom d'utilisateur</label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              className={errors.username ? 'error' : ''}
-              placeholder="Votre nom d'utilisateur"
-              disabled={loading}
-            />
-            {errors.username && <span className="error-text">{errors.username}</span>}
-          </div>
+      {success && (
+        <div style={{ color: 'green', marginBottom: '1rem' }}>
+          {success}
+        </div>
+      )}
 
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className={errors.email ? 'error' : ''}
-              placeholder="Votre email"
-              disabled={loading}
-            />
-            {errors.email && <span className="error-text">{errors.email}</span>}
-          </div>
+      <form onSubmit={handleSubmit}>
+        <div style={{ marginBottom: '1rem' }}>
+          <label>Nom d'utilisateur:</label>
+          <input
+            type="text"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            required
+            style={{ width: '100%', padding: '0.5rem', marginTop: '0.25rem' }}
+          />
+        </div>
 
-          <div className="form-group">
-            <label htmlFor="password">Mot de passe</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              className={errors.password ? 'error' : ''}
-              placeholder="Votre mot de passe"
-              disabled={loading}
-            />
-            {errors.password && <span className="error-text">{errors.password}</span>}
-          </div>
+        <div style={{ marginBottom: '1rem' }}>
+          <label>Email:</label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            required
+            style={{ width: '100%', padding: '0.5rem', marginTop: '0.25rem' }}
+          />
+        </div>
 
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Confirmer le mot de passe</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              className={errors.confirmPassword ? 'error' : ''}
-              placeholder="Confirmez votre mot de passe"
-              disabled={loading}
-            />
-            {errors.confirmPassword && <span className="error-text">{errors.confirmPassword}</span>}
-          </div>
+        <div style={{ marginBottom: '1rem' }}>
+          <label>Mot de passe:</label>
+          <input
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            required
+            style={{ width: '100%', padding: '0.5rem', marginTop: '0.25rem' }}
+          />
+        </div>
 
-          <button 
-            type="submit" 
-            className="btn btn-primary btn-full"
-            disabled={loading}
-          >
-            {loading ? 'Inscription...' : 'S\'inscrire'}
-          </button>
-        </form>
+        <div style={{ marginBottom: '1rem' }}>
+          <label>Confirmer le mot de passe:</label>
+          <input
+            type="password"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+            style={{ width: '100%', padding: '0.5rem', marginTop: '0.25rem' }}
+          />
+        </div>
 
-        <p className="auth-switch">
-          Déjà un compte ? 
-          <Link to="/login"> Se connecter</Link>
-        </p>
-      </div>
+        <button 
+          type="submit" 
+          disabled={loading}
+          style={{ 
+            width: '100%', 
+            padding: '0.75rem', 
+            backgroundColor: '#3498db', 
+            color: 'white', 
+            border: 'none',
+            cursor: 'pointer'
+          }}
+        >
+          {loading ? 'Inscription...' : 'S\'inscrire'}
+        </button>
+      </form>
+
+      <p style={{ textAlign: 'center', marginTop: '1rem' }}>
+        Déjà un compte ? <Link to="/login">Se connecter</Link>
+      </p>
     </div>
   );
 };
