@@ -22,7 +22,8 @@ cd mern-product-manager/backend
 
 ```bash
 
-npm install
+npm install express mongoose bcryptjs jsonwebtoken dotenv cors
+
 ```
 ````
 ### 3. Créer un fichier `.env`
