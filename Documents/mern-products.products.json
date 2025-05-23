@@ -1,0 +1,320 @@
+[{
+  "_id": {
+    "$oid": "6830639fc4e5a75d81df2194"
+  },
+  "name": "Iphone",
+  "description": "Description iphone",
+  "price": 150,
+  "category": "Électronique",
+  "imageUrl": "/uploads/products/1748001695835-84666052.jpg",
+  "owner": {
+    "$oid": "683025a6c4e5a75d81df2130"
+  },
+  "createdAt": {
+    "$date": "2025-05-23T12:01:35.861Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-23T13:11:11.924Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "683063e6c4e5a75d81df2197"
+  },
+  "name": "Voiture",
+  "description": "Voiture",
+  "price": 35000,
+  "category": "Automobile",
+  "imageUrl": "/uploads/products/1748001766561-975442378.jpg",
+  "owner": {
+    "$oid": "683025a6c4e5a75d81df2130"
+  },
+  "createdAt": {
+    "$date": "2025-05-23T12:02:46.563Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-23T12:02:46.563Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "683063f7c4e5a75d81df219a"
+  },
+  "name": "Voiture",
+  "description": "",
+  "price": 35000,
+  "category": "Automobile",
+  "imageUrl": "/uploads/products/1748001783655-762206815.jpg",
+  "owner": {
+    "$oid": "683025a6c4e5a75d81df2130"
+  },
+  "createdAt": {
+    "$date": "2025-05-23T12:03:03.656Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-23T12:03:03.656Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68306415c4e5a75d81df219d"
+  },
+  "name": "Tablette",
+  "description": "Tablette",
+  "price": 400,
+  "category": "Électronique",
+  "imageUrl": "/uploads/products/1748001813132-336884668.jpg",
+  "owner": {
+    "$oid": "683025a6c4e5a75d81df2130"
+  },
+  "createdAt": {
+    "$date": "2025-05-23T12:03:33.134Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-23T12:03:33.134Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68306492c4e5a75d81df21a0"
+  },
+  "name": "Livre",
+  "description": "Livre",
+  "price": 12,
+  "category": "Livres",
+  "imageUrl": "/uploads/products/1748001938893-390044447.jpg",
+  "owner": {
+    "$oid": "683025a6c4e5a75d81df2130"
+  },
+  "createdAt": {
+    "$date": "2025-05-23T12:05:38.895Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-23T12:05:38.895Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68306525c4e5a75d81df21a7"
+  },
+  "name": "Gameboy",
+  "description": "Gameboy",
+  "price": 30,
+  "category": "Électronique",
+  "imageUrl": "/uploads/products/1748002085168-640094827.jpg",
+  "owner": {
+    "$oid": "68302a94c4e5a75d81df2141"
+  },
+  "createdAt": {
+    "$date": "2025-05-23T12:08:05.169Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-23T12:08:05.169Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6830654bc4e5a75d81df21aa"
+  },
+  "name": "Santé",
+  "description": "Séance de Yoga",
+  "price": 20,
+  "category": "Santé & Beauté",
+  "imageUrl": "/uploads/products/1748002123937-289637392.jpg",
+  "owner": {
+    "$oid": "68302a94c4e5a75d81df2141"
+  },
+  "createdAt": {
+    "$date": "2025-05-23T12:08:43.940Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-23T12:08:43.940Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68306563c4e5a75d81df21ad"
+  },
+  "name": "CERAVE",
+  "description": "CERAVE",
+  "price": 25,
+  "category": "Santé & Beauté",
+  "imageUrl": "/uploads/products/1748002147541-46514378.jpg",
+  "owner": {
+    "$oid": "68302a94c4e5a75d81df2141"
+  },
+  "createdAt": {
+    "$date": "2025-05-23T12:09:07.543Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-23T12:09:07.543Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68306580c4e5a75d81df21b0"
+  },
+  "name": "PIZZA",
+  "description": "Pizza",
+  "price": 10,
+  "category": "Alimentation",
+  "imageUrl": "/uploads/products/1748002176273-497519284.jpg",
+  "owner": {
+    "$oid": "68302a94c4e5a75d81df2141"
+  },
+  "createdAt": {
+    "$date": "2025-05-23T12:09:36.275Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-23T12:09:36.275Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6830686fc4e5a75d81df21db"
+  },
+  "name": "Maison",
+  "description": "Maison",
+  "price": 30000000,
+  "category": "Maison & Jardin",
+  "imageUrl": "/uploads/products/1748002927238-417074218.jpg",
+  "owner": {
+    "$oid": "68302a94c4e5a75d81df2141"
+  },
+  "createdAt": {
+    "$date": "2025-05-23T12:22:07.239Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-23T12:22:07.239Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6830689bc4e5a75d81df21de"
+  },
+  "name": "Jardin",
+  "description": "Location",
+  "price": 1200,
+  "category": "Maison & Jardin",
+  "imageUrl": "/uploads/products/1748002971763-466447399.jpg",
+  "owner": {
+    "$oid": "68302a94c4e5a75d81df2141"
+  },
+  "createdAt": {
+    "$date": "2025-05-23T12:22:51.765Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-23T12:22:51.765Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "683068edc4e5a75d81df2201"
+  },
+  "name": "Jeans",
+  "description": "Jeans ZARA",
+  "price": 15,
+  "category": "Vêtements",
+  "imageUrl": "/uploads/products/1748003053915-116770506.jpg",
+  "owner": {
+    "$oid": "68302a94c4e5a75d81df2141"
+  },
+  "createdAt": {
+    "$date": "2025-05-23T12:24:13.917Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-23T12:24:13.917Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68306947c4e5a75d81df220b"
+  },
+  "name": "Rubixcub",
+  "description": "Rubixcube",
+  "price": 30,
+  "category": "Jouets",
+  "imageUrl": "/uploads/products/1748003143640-757269939.jpg",
+  "owner": {
+    "$oid": "68302a94c4e5a75d81df214a"
+  },
+  "createdAt": {
+    "$date": "2025-05-23T12:25:43.642Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-23T12:25:43.642Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68306964c4e5a75d81df220e"
+  },
+  "name": "Pates",
+  "description": "Pates",
+  "price": 10,
+  "category": "Alimentation",
+  "imageUrl": "/uploads/products/1748003172689-280510498.jpg",
+  "owner": {
+    "$oid": "68302a94c4e5a75d81df214a"
+  },
+  "createdAt": {
+    "$date": "2025-05-23T12:26:12.691Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-23T12:26:12.691Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68306981c4e5a75d81df2211"
+  },
+  "name": "Cerave",
+  "description": "Produits de beauté",
+  "price": 50,
+  "category": "Santé & Beauté",
+  "imageUrl": "/uploads/products/1748003201663-790655053.jpg",
+  "owner": {
+    "$oid": "68302a94c4e5a75d81df214a"
+  },
+  "createdAt": {
+    "$date": "2025-05-23T12:26:41.665Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-23T12:26:41.665Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "68307446c4e5a75d81df2251"
+  },
+  "name": "Iphone",
+  "description": "Iphone",
+  "price": 150,
+  "category": "Électronique",
+  "imageUrl": "/uploads/products/1748005958132-860837379.jpg",
+  "owner": {
+    "$oid": "683025a6c4e5a75d81df2130"
+  },
+  "createdAt": {
+    "$date": "2025-05-23T13:12:38.133Z"
+  },
+  "updatedAt": {
+    "$date": "2025-05-23T13:12:38.133Z"
+  },
+  "__v": 0
+}]
